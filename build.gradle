@@ -1,0 +1,62 @@
+buildscript {
+
+    ext {
+        karateVersion = '1.2.0'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.intuit.karate:karate-junit5:1.2.0")
+        classpath("com.intuit.karate:karate-core:1.2.0")
+        classpath("com.intuit.karate:karate-apache:0.9.6")
+    }
+}
+
+
+plugins {
+    id 'java'
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    test {
+        resources {
+            srcDir file('src/test/java')
+            exclude '**/*.java'
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'com.intuit.karate:karate-junit5:1.2.0'
+    implementation 'com.intuit.karate:karate-mock-http:0.4.3.1'
+    implementation 'com.intuit.karate:karate-core:1.2.0'
+    implementation 'com.intuit.karate:karate-apache:0.9.6'
+//    implementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
+//    implementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
+}
+
+
+test {
+    useJUnitPlatform()
+    systemProperty "karate.options", System.properties.getProperty("karate.options")
+    systemProperty "karate.env", System.properties.getProperty("karate.env")
+    systemProperty "karate.tags", System.properties.getProperty("karate.tags")
+    systemProperty "some.prop", System.properties.getProperty("some.prop")
+    outputs.upToDateWhen { false }
+    systemProperty 'karate.output.directory', "${buildDir}/karate-reports"
+
+}
+
+
+task karateDebug(type: JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.intuit.karate.Main'
+}
