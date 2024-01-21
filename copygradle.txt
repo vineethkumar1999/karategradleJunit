@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation 'org.apache.maven.plugins:maven-surefire-plugin:3.0.0-M5'
+    testImplementation 'com.intuit.karate:karate-apache:0.9.5'
+    testImplementation 'com.intuit.karate:karate-junit4:0.9.5'
+    testImplementation 'com.intuit.karate:karate-core:0.9.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.1'
+
+}
+test {
+    useJUnitPlatform()
+
+    systemProperty "karate.config.dir", "src/test/resources"
+    systemProperty "karate.config.env", System.getProperty("karate.config.env")
+    systemProperty "karate.env", System.getProperty("karate.env")
+    systemProperty "env2", System.getProperty("env2")
+    systemProperty "karate.output.directory", "$buildDir/karate-reports"
+    systemProperty "karate.tags", System.getProperty("karate.tags")
+    systemProperty "karate.feature", System.getProperty("karate.feature")
+    systemProperty "karate.callSingleCache", System.getProperty("karate.callSingleCache")
+    systemProperty "karate.callOnceCache", System.getProperty("karate.callOnceCache")
+    systemProperty "karate.callZeroCache", System.getProperty("karate.callZeroCache")
+
+
+    doFirst {
+        javaexec {
+            main = "com.intuit.karate.cli.Main"
+            classpath = sourceSets.test.runtimeClasspath
+            args = ["--tags", System.getProperty("karate.tags", ""), "src/test/resources"]
+////            args = ["--tags", System.getProperty("karate.tags", "~ignore"), "-Dkarate.env=" + System.getProperty("karate.env", "dev"), "src/test/resources"]
+//
+////            args = ["--tags", System.getProperty("karate.tags", "~@ignore"), "src/test/resources"] //to specify default tag to run. ~means dont run that tag.
+        }
+    }
+
+
+}
+
+
+sourceSets {
+    test {
+        resources {
+            srcDirs = ['src/test/java']
+//            srcDir file('src/test/resources')
+            exclude '**/*.java'
+        }
+    }
+}
